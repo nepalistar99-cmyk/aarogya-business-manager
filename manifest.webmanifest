@@ -1,1 +1,19 @@
-{"name":"AAROGYA Business Manager Pro","short_name":"AAROGYA","start_url":"./","display":"standalone","background_color":"#f4f7f8","theme_color":"#0f766e","icons":[]}
+{
+  "id": "./",
+  "name": "AAROGYA SURGICAL HOUSE Business Manager",
+  "short_name": "Aarogya Manager",
+  "description": "Inventory, purchase, sales and invoice manager for Aarogya Surgical House.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f7fa",
+  "theme_color": "#123b5d",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

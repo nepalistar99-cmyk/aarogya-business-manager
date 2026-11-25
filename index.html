@@ -1,4 +1,4 @@
-<<!doctype html>
+<!doctype html>
 <html lang="ne">
 <head>
 <meta charset="utf-8">
@@ -33,6 +33,13 @@ footer{text-align:center;color:#80909d;font-size:11px;padding:20px}
 @media(max-width:520px){header{padding:14px}.brand{font-size:17px}.cards{gap:8px}.card{padding:12px}.metric{font-size:19px}.formgrid,.grid2{grid-template-columns:1fr}h1{font-size:20px}}
 @media print{header,nav,.no-print,footer{display:none!important}.wrap{display:block;padding:0}.panel,.card{box-shadow:none;border:0}body{background:white}.print-only{display:block!important}}
 </style>
+
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#123b5d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Aarogya Manager">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
 </head>
 <body>
 <header><div><div class="brand">AAROGYA SURGICAL HOUSE</div><div class="sub">BUTWAL, NEPAL · BUSINESS MANAGER</div></div><div class="sub">Inventory · Sales · Purchase · Reports</div></header>
@@ -130,7 +137,22 @@ function renderDashboard(){let stock=db.products.reduce((s,p)=>s+p.qty*p.cost,0)
 function renderReports(){let purchase=db.purchases.reduce((s,x)=>s+x.total,0),sales=db.sales.reduce((s,x)=>s+x.base,0),cost=db.sales.reduce((s,x)=>s+x.cost,0);$('rPurchase').textContent=money(purchase);$('rSales').textContent=money(sales);$('rCost').textContent=money(cost);$('rProfit').textContent=money(sales-cost);$('reportSales').innerHTML=table(['मिति','बिल','ग्राहक','बिक्री','लागत','नाफा'],db.sales.map(s=>`<tr><td>${esc(s.date)}</td><td>${esc(s.bill)}</td><td>${esc(s.customer)}</td><td>${money(s.base)}</td><td>${money(s.cost)}</td><td>${money(s.profit)}</td></tr>`))}
 function renderAll(){renderDashboard();renderProducts();fillProducts();renderHistory();renderPeople('customer');renderPeople('supplier');renderReports();$('today').textContent=new Date().toLocaleDateString('en-GB')}
 function invoiceHTML(s){let st=db.settings;return `<div style="font-family:Arial;color:#172b3a;padding:22px"><h2 style="text-align:center;margin:0">${esc(st.name||'AAROGYA SURGICAL HOUSE')}</h2><p style="text-align:center;margin:4px">${esc(st.address||'Butwal, Nepal')} · ${esc(st.phone||'')}</p><p style="text-align:center">PAN: ${esc(st.pan||'')} · ${esc(st.email||'')}</p><hr><h3 style="text-align:center">TAX INVOICE</h3><p>Bill No: ${esc(s.bill)} <span style="float:right">Date: ${esc(s.date)}</span></p><p>Customer: ${esc(s.customer||'Cash Customer')}</p><table style="width:100%;border-collapse:collapse" border="1" cellpadding="8"><tr><th>Particulars</th><th>Qty</th><th>Rate</th><th>Amount</th></tr><tr><td>${esc(s.product)}</td><td>${s.qty}</td><td>${money(s.price)}</td><td>${money(s.base)}</td></tr></table><p>Subtotal: ${money(s.base)}</p><p>VAT (${s.vat}%): ${money(s.total-s.base)}</p><h3 style="text-align:right">Grand Total: ${money(s.total)}</h3><p style="margin-top:60px">Customer Signature: ______________ <span style="float:right">Authorized Signature: ______________</span></p></div>`}
-function printLastInvoice(){let s=lastInvoice||db.sales[0];if(!s)return alert('अहिलेसम्म बिक्री बिल छैन');let w=window.open('','_blank');w.document.write('<html><head><title>Invoice</title></head><body>'+invoiceHTML(s)+'</body></html>');w.document.close();w.focus();w.print()}
+function printLastInvoice(){let s=lastInvoice||db.sales[0];if(!s)return alert('अहिलेसम्म बिक्री बिल छैन');let w=window.open('','_blank');w.document.write('<html><head><title>Invoice</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#123b5d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Aarogya Manager">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+</head><body>'+invoiceHTML(s)+'
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js").catch(err => console.error("PWA setup:", err));
+  });
+}
+</script>
+</body></html>');w.document.close();w.focus();w.print()}
 function saveSettings(){db.settings={name:$('bizName').value,address:$('bizAddress').value,phone:$('bizPhone').value,pan:$('bizPan').value,email:$('bizEmail').value};save();alert('विवरण सुरक्षित भयो')}
 function backup(){let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='aarogya-business-backup-'+today()+'.json';a.click();URL.revokeObjectURL(a.href)}
 function restore(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result);if(!x.products||!x.sales)throw Error();db=x;save();alert('Backup Restore भयो')}catch(err){alert('यो Backup फाइल मान्य छैन')}};r.readAsText(f)}
@@ -138,4 +160,12 @@ function clearAll(){if(confirm('सबै डाटा स्थायी रू
 function exportCSV(){let rows=[['Date','Bill','Customer','Product','Qty','Base','VAT','Total','Profit'],...db.sales.map(s=>[s.date,s.bill,s.customer,s.product,s.qty,s.base,s.vat,s.total,s.profit])];let csv=rows.map(r=>r.map(x=>'"'+String(x??'').replace(/"/g,'""')+'"').join(',')).join('\n'),a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv'}));a.download='aarogya-sales-report.csv';a.click();URL.revokeObjectURL(a.href)}
 $('buyDate').value=today();$('saleDate').value=today();renderAll();
 </script>
-</body></html>>
+
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js").catch(err => console.error("PWA setup:", err));
+  });
+}
+</script>
+</body></html>
