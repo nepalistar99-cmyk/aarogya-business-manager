@@ -1,0 +1,29 @@
+AAROGYA BUSINESS MANAGER PRO — starter package
+================================================
+
+This ZIP contains a responsive browser-based prototype:
+- index.html, app.js: working local preview for products, parties, basic sales and purchases
+- supabase_schema.sql: preliminary database schema (not production-ready)
+- manifest.webmanifest, sw.js: installable PWA foundation
+
+IMPORTANT
+---------
+This is NOT yet the fully hosted cloud application. The preview stores data in the current
+browser only. It does not yet sync between devices, implement complete accounting, secure
+multi-tenant approval, robust offline synchronization, FEFO stock posting, or IRD-compliant
+tax invoices. Do not use it as the official accounting record.
+
+LOCAL PREVIEW
+-------------
+Open index.html in a browser. Some PWA features require HTTPS hosting.
+
+HOSTING ROADMAP
+---------------
+1. Create a GitHub repository and upload the contents of this folder (not the ZIP itself).
+2. Connect that repository to Cloudflare Pages; use the project root and no build command.
+3. Add Supabase integration only after implementing and reviewing authentication, tenant
+   provisioning, row-level security, migrations and server-side privileged operations.
+4. Never put a Supabase service_role key or database password in browser JavaScript.
+
+The SQL file is a starting schema only. Review policies and test with separate accounts before
+putting real customer, financial, or personal data into the system.

@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0f766e"><link rel="manifest" href="manifest.webmanifest">
+<title>AAROGYA Business Manager Pro</title>
+<style>
+:root{--brand:#0f766e;--ink:#17212b;--muted:#64748b;--bg:#f4f7f8;--line:#e2e8f0}
+*{box-sizing:border-box}body{margin:0;font:15px system-ui,Arial;background:var(--bg);color:var(--ink)}
+header{background:#fff;border-bottom:1px solid var(--line);padding:14px 20px;display:flex;gap:16px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:2}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800}.logo{background:var(--brand);color:#fff;border-radius:12px;padding:9px 12px}
+button,input,select{font:inherit}button{border:0;background:var(--brand);color:#fff;border-radius:9px;padding:10px 14px;cursor:pointer}
+button.secondary{background:#e2e8f0;color:#17212b}button.danger{background:#b91c1c}
+.layout{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 60px)}
+nav{background:#fff;border-right:1px solid var(--line);padding:14px}nav button{display:block;width:100%;text-align:left;margin:4px 0;background:transparent;color:#334155}nav button.active,nav button:hover{background:#e6f4f2;color:#075e57}
+main{padding:22px;max-width:1400px;width:100%;margin:auto}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}.metric{font-size:25px;font-weight:800;margin-top:8px}.muted{color:var(--muted);font-size:13px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:16px}
+table{width:100%;border-collapse:collapse;background:#fff}th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left;font-size:14px}th{color:#475569;background:#f8fafc}
+input,select{border:1px solid #cbd5e1;border-radius:8px;padding:10px;width:100%;background:#fff}.formgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.field label{display:block;font-size:12px;color:#64748b;margin-bottom:5px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}.hidden{display:none!important}.pill{background:#ecfdf5;color:#047857;padding:4px 8px;border-radius:99px;font-size:12px}
+#login{max-width:440px;margin:8vh auto;padding:24px}.notice{background:#fffbeb;border:1px solid #fde68a;padding:12px;border-radius:10px;color:#854d0e;margin-bottom:14px}
+@media(max-width:800px){.layout{grid-template-columns:1fr}nav{display:flex;overflow:auto;border-right:0;border-bottom:1px solid var(--line);gap:4px}nav button{white-space:nowrap;width:auto}.grid{grid-template-columns:repeat(2,1fr)}main{padding:12px}.formgrid{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.grid{grid-template-columns:1fr 1fr}.formgrid{grid-template-columns:1fr}header{padding:10px}.metric{font-size:20px}}
+@media print{header,nav,.noprint{display:none!important}.layout{display:block}main{padding:0}.card{border:0}}
+</style></head>
+<body>
+<header><div class="brand"><span class="logo">✚</span><span id="brandName">AAROGYA BUSINESS MANAGER PRO</span></div><div class="actions"><select id="language" style="width:auto"><option value="en">English</option><option value="np">नेपाली</option></select><button class="secondary" onclick="logout()" id="logoutBtn">Log out</button></div></header>
+<section id="login" class="card">
+<h2>Welcome to AAROGYA</h2><p class="muted">Business management workspace</p>
+<div class="notice">Preview mode: data is saved in this browser only until Supabase is configured.</div>
+<div class="field"><label>Business name</label><input id="loginBusiness" value="AAROGYA"></div><div style="height:10px"></div>
+<div class="field"><label>Access PIN</label><input id="pin" type="password" placeholder="Set a local demo PIN"></div><div style="height:14px"></div>
+<button onclick="login()">Open workspace</button>
+</section>
+<div id="app" class="layout hidden">
+<nav class="noprint">
+<button class="active" data-page="dashboard" onclick="showPage('dashboard')">▦ Dashboard</button>
+<button data-page="sales" onclick="showPage('sales')">＋ Sales / Billing</button>
+<button data-page="products" onclick="showPage('products')">▤ Inventory</button>
+<button data-page="parties" onclick="showPage('parties')">♙ Parties</button>
+<button data-page="purchases" onclick="showPage('purchases')">⇩ Purchases</button>
+<button data-page="reports" onclick="showPage('reports')">▥ Reports</button>
+<button data-page="settings" onclick="showPage('settings')">⚙ Settings</button>
+</nav><main>
+<section id="dashboard" class="page">
+<div class="toolbar"><div><h2>Dashboard</h2><div class="muted">Business overview</div></div><span class="pill">Local preview</span></div>
+<div class="grid">
+<div class="card"><div class="muted">Total sales</div><div class="metric" id="mSales">NPR 0</div></div>
+<div class="card"><div class="muted">Products</div><div class="metric" id="mProducts">0</div></div>
+<div class="card"><div class="muted">Customers / Suppliers</div><div class="metric" id="mParties">0</div></div>
+<div class="card"><div class="muted">Purchases</div><div class="metric" id="mPurchases">NPR 0</div></div>
+</div><div class="card"><h3>Recent sales</h3><div id="recentSales" class="muted">No sales recorded yet.</div></div>
+</section>
+<section id="products" class="page hidden">
+<div class="toolbar"><div><h2>Inventory</h2><div class="muted">Products, stock and expiry tracking</div></div><button onclick="showForm('productForm')">＋ Add product</button></div>
+<div id="productForm" class="card hidden"><h3>Add product</h3><div class="formgrid">
+<div class="field"><label>Product name</label><input id="pName"></div><div class="field"><label>SKU / Barcode</label><input id="pSku"></div><div class="field"><label>Category</label><select id="pCategory"><option>Surgical</option><option>Dental</option><option>Supplement</option><option>Chemical</option><option>Other</option></select></div>
+<div class="field"><label>Unit</label><input id="pUnit" value="pcs"></div><div class="field"><label>Opening stock</label><input id="pStock" type="number" value="0"></div><div class="field"><label>Cost price</label><input id="pCost" type="number" value="0"></div><div class="field"><label>Selling price</label><input id="pPrice" type="number" value="0"></div><div class="field"><label>Batch no.</label><input id="pBatch"></div><div class="field"><label>Expiry date</label><input id="pExpiry" type="date"></div></div><p><button onclick="addProduct()">Save product</button> <button class="secondary" onclick="showForm('productForm',false)">Cancel</button></p></div>
+<div class="card"><input id="productSearch" placeholder="Search products..." oninput="renderProducts()"><div style="overflow:auto;margin-top:12px"><table><thead><tr><th>Product</th><th>SKU</th><th>Category</th><th>Stock</th><th>Price</th><th>Expiry</th></tr></thead><tbody id="productsRows"></tbody></table></div></div>
+</section>
+<section id="parties" class="page hidden"><div class="toolbar"><div><h2>Customers & Suppliers</h2></div><button onclick="showForm('partyForm')">＋ Add party</button></div>
+<div id="partyForm" class="card hidden"><div class="formgrid"><div class="field"><label>Name</label><input id="partyName"></div><div class="field"><label>Type</label><select id="partyType"><option>Customer</option><option>Supplier</option><option>Both</option></select></div><div class="field"><label>Phone</label><input id="partyPhone"></div><div class="field"><label>PAN / VAT</label><input id="partyPan"></div><div class="field"><label>Address</label><input id="partyAddress"></div></div><p><button onclick="addParty()">Save party</button></p></div>
+<div class="card"><table><thead><tr><th>Name</th><th>Type</th><th>Phone</th><th>PAN/VAT</th></tr></thead><tbody id="partiesRows"></tbody></table></div></section>
+<section id="sales" class="page hidden"><div class="toolbar"><div><h2>Sales / Billing</h2><div class="muted">Create a basic sales invoice</div></div></div>
+<div class="card"><div class="formgrid"><div class="field"><label>Invoice number</label><input id="invoiceNo"></div><div class="field"><label>Customer</label><select id="saleParty"></select></div><div class="field"><label>Product</label><select id="saleProduct"></select></div><div class="field"><label>Quantity</label><input id="saleQty" type="number" value="1" min="0.001" step="0.001"></div><div class="field"><label>Unit price (NPR)</label><input id="salePrice" type="number" value="0"></div><div class="field"><label>Payment mode</label><select id="salePayment"><option>Cash</option><option>Bank</option><option>QR</option><option>Credit</option></select></div></div><p class="actions"><button onclick="saveSale()">Save sale</button><button class="secondary" onclick="printLastInvoice()">Print last invoice</button></p></div>
+<div class="card"><h3>Sales history</h3><div style="overflow:auto"><table><thead><tr><th>Invoice</th><th>Customer</th><th>Total</th><th>Payment</th><th>Date</th></tr></thead><tbody id="salesRows"></tbody></table></div></div></section>
+<section id="purchases" class="page hidden"><h2>Purchases</h2><div class="notice">Purchase entry and supplier stock posting are part of the next connected-data milestone. Record purchase totals in this preview below.</div><div class="formgrid"><div class="field"><label>Supplier</label><input id="purchaseSupplier"></div><div class="field"><label>Purchase total (NPR)</label><input id="purchaseTotal" type="number"></div></div><p><button onclick="addPurchase()">Save purchase total</button></p><div id="purchaseRows"></div></section>
+<section id="reports" class="page hidden"><h2>Reports</h2><div class="card"><h3>Business summary</h3><p id="reportText">No data yet.</p><button onclick="window.print()">Print report</button></div></section>
+<section id="settings" class="page hidden"><h2>Business settings</h2><div class="card"><div class="formgrid"><div class="field"><label>Business display name</label><input id="settingName" value="AAROGYA"></div><div class="field"><label>Phone</label><input id="settingPhone"></div><div class="field"><label>PAN / VAT</label><input id="settingPan"></div><div class="field"><label>Address</label><input id="settingAddress"></div><div class="field"><label>Brand colour</label><input id="settingColor" type="color" value="#0f766e"></div></div><p><button onclick="saveSettings()">Save settings</button></p></div>
+<div class="notice">Cloud login, approval workflow, multi-user permissions, multi-tenant isolation and synchronized backup require Supabase configuration and production security review. This preview does not provide those services yet.</div></section>
+</main></div>
+<script src="app.js"></script></body></html>
